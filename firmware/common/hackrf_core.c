@@ -66,6 +66,9 @@ static struct gpio_t gpio_max283x_select    = GPIO(0, 15);
 /* MAX5864 SPI chip select (AD_CS) GPIO PinMux */
 static struct gpio_t gpio_max5864_select    = GPIO(2,  7);
 
+// Added by Tayeb Zaidi to enable TX indicator from GPIO, using GPIO3_8 available on the P20 header, pin 5
+struct gpio_t gpio_tx_external = GPIO(3, 8);
+
 /* RFFC5071 GPIO serial interface PinMux */
 // #ifdef RAD1O
 // static struct gpio_t gpio_rffc5072_select   = GPIO(2, 13);
@@ -905,6 +908,10 @@ void pin_setup(void)
 	gpio_output(&gpio_led[0]);
 	gpio_output(&gpio_led[1]);
 	gpio_output(&gpio_led[2]);
+
+	//Added by Tayeb Zaidi, enable gpio_output for GPIO3_8
+	gpio_output(&gpio_tx_external);
+
 #ifdef RAD1O
 	gpio_output(&gpio_led[3]);
 #endif

@@ -107,11 +107,19 @@ static void switchctrl_set_hackrf_one(rf_path_t* const rf_path, uint8_t ctrl)
 		if (detected_platform() != BOARD_ID_HACKRF1_R9) {
 			gpio_set(rf_path->gpio_tx);
 		}
+
+		//Added by Tayeb Zaidi, set GPIO3_8 high during TX
+		gpio_set(&gpio_tx_external);
+
 		gpio_clear(rf_path->gpio_rx);
 	} else {
 		if (detected_platform() != BOARD_ID_HACKRF1_R9) {
 			gpio_clear(rf_path->gpio_tx);
 		}
+
+		//Added by Tayeb Zaidi, set GPIO3_8 high during TX
+		gpio_clear(&gpio_tx_external);
+
 		gpio_set(rf_path->gpio_rx);
 	}
 

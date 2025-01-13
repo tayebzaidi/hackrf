@@ -280,6 +280,9 @@ extern rf_path_t rf_path;
 extern jtag_t jtag_cpld;
 extern i2c_bus_t i2c0;
 
+//Added by Tayeb Zaidi to enable use of GPIO3_8 for TX output indication
+extern struct gpio_t gpio_tx_external;
+
 void cpu_clock_init(void);
 void ssp1_set_mode_max283x(void);
 void ssp1_set_mode_max5864(void);
