@@ -23,6 +23,15 @@
 
 #include "rf_path.h"
 
+void my_debug_force_tx(rf_path_t* const rf_path)
+{
+    // Force the TX direction
+    rf_path_set_direction(rf_path, RF_PATH_DIRECTION_TX);
+
+    // Alternatively, do the same for RX if you want to see that path
+    // rf_path_set_direction(rf_path, RF_PATH_DIRECTION_RX);
+}
+
 #include <libopencm3/lpc43xx/scu.h>
 
 #include <hackrf_core.h>
@@ -35,6 +44,8 @@
 #include "max5864.h"
 #include "sgpio.h"
 #include "user_config.h"
+
+#define SystemCoreClock 10000000 // Example: 10 MHz for STM32F4
 
 #if (defined JAWBREAKER || defined HACKRF_ONE || defined RAD1O)
 	/*
@@ -103,13 +114,23 @@ static struct gpio_t gpio_h1r9_no_ant_pwr = GPIO(2, 4);
 #ifdef HACKRF_ONE
 static void switchctrl_set_hackrf_one(rf_path_t* const rf_path, uint8_t ctrl)
 {
+	//Added by Tayeb Zaidi to test the GPIO pin functioning
+    static bool once = false;
+    if(!once) {
+        // Turn pin on once, just to confirm we are in here at all
+        gpio_set(&gpio_tx_external);
+		delay(6000000);
+		gpio_clear(&gpio_tx_external);
+        once = true;
+    }
+
 	if (ctrl & SWITCHCTRL_TX) {
 		if (detected_platform() != BOARD_ID_HACKRF1_R9) {
 			gpio_set(rf_path->gpio_tx);
 		}
 
-		//Added by Tayeb Zaidi, set GPIO3_8 high during TX
-		gpio_set(&gpio_tx_external);
+		// //Added by Tayeb Zaidi, set GPIO3_8 high during TX
+		// gpio_set(&gpio_tx_external);
 
 		gpio_clear(rf_path->gpio_rx);
 	} else {
@@ -117,8 +138,8 @@ static void switchctrl_set_hackrf_one(rf_path_t* const rf_path, uint8_t ctrl)
 			gpio_clear(rf_path->gpio_tx);
 		}
 
-		//Added by Tayeb Zaidi, set GPIO3_8 high during TX
-		gpio_clear(&gpio_tx_external);
+		// //Added by Tayeb Zaidi, set GPIO3_8 low during not-TX
+		// gpio_clear(&gpio_tx_external);
 
 		gpio_set(rf_path->gpio_rx);
 	}
@@ -417,6 +438,9 @@ void rf_path_set_direction(rf_path_t* const rf_path, const rf_path_direction_t d
 		ssp1_set_mode_max283x();
 		max283x_tx(&max283x);
 		sgpio_configure(&sgpio_config, SGPIO_DIRECTION_TX);
+
+		//Added by Tayeb Zaidi, set GPIO3_8 high during TX
+		gpio_set(&gpio_tx_external);
 		break;
 
 	case RF_PATH_DIRECTION_RX:

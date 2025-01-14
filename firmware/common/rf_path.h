@@ -74,6 +74,7 @@ typedef struct rf_path_t {
 
 void rf_path_pin_setup(rf_path_t* const rf_path);
 void rf_path_init(rf_path_t* const rf_path);
+void my_debug_force_tx(rf_path_t* const rf_path);
 
 void rf_path_set_direction(rf_path_t* const rf_path, const rf_path_direction_t direction);
 
